@@ -1,0 +1,10 @@
+*.py[cod]
+
+# Packages
+/casperdcl_test.egg-info
+/.eggs/
+/build/
+/dist/
+
+# Unit test / coverage reports
+__pycache__
