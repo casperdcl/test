@@ -1,0 +1,15 @@
+name: test
+on:
+  push:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: casperdcl/deploy-pypi@v1
+      # if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      with:
+        user: ${{ secrets.user }}
+        password: ${{ secrets.password }}
+        build: true
+        skip_existing: true
