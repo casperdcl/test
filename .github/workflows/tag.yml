@@ -1,0 +1,27 @@
+name: Tag
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+
+jobs:
+  tag:
+    if: startsWith(github.event.comment.body, '/tag')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Tag Commit
+      run: |
+        TAG=$(echo "$COMMENT" | awk '{print $2}')
+        COMMIT=$(echo "$COMMENT" | awk '{print $3}')
+        git config user.name tag-bot
+        git config user.email casperdcl@noreply.github.com
+        git tag $TAG $COMMIT
+        git push --tags
+      env:
+        COMMENT: ${{ github.event.comment.body }}
+  always:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo prevent failure when other jobs are skipped
