@@ -11,6 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/github-script@v2
+      with:
+        script: |
+          post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
+          post({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            comment_id: context.payload.comment.id,
+            content: "eyes",
+          })
     - name: Tag Commit
       run: |
         TAG=$(echo "$COMMENT" | awk '{print $2}')
@@ -21,7 +31,17 @@ jobs:
         git push --tags
       env:
         COMMENT: ${{ github.event.comment.body }}
+    - uses: actions/github-script@v2
+      with:
+        script: |
+          post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
+          post({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            comment_id: context.payload.comment.id,
+            content: "rocket",
+          })
   always:
     runs-on: ubuntu-latest
     steps:
-      - run: echo prevent failure when other jobs are skipped
+    - run: echo prevent failure when other jobs are skipped
