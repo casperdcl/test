@@ -30,10 +30,10 @@ jobs:
       env:
         BODY: ${{ github.event.comment.body }}
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        GIT_COMMITTER_NAME: tag-bot
-        GIT_AUTHOR_NAME: tag-bot
-        GIT_COMMITTER_EMAIL: casperdcl@noreply.github.com
-        GIT_AUTHOR_EMAIL: casperdcl@noreply.github.com
+        #GIT_COMMITTER_NAME: tag-bot
+        #GIT_AUTHOR_NAME: tag-bot
+        #GIT_COMMITTER_EMAIL: casperdcl@noreply.github.com
+        #GIT_AUTHOR_EMAIL: casperdcl@noreply.github.com
     - uses: actions/github-script@v2
       with:
         script: |
