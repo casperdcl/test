@@ -23,9 +23,10 @@ jobs:
           })
     - name: Tag Commit
       run: |
-        git fetch --unshallow
-        git tag $(echo "$BODY" | awk '{print $2" "$3}')
-        git push https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --tags
+        git clone https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} repo
+        git -C repo tag $(echo "$BODY" | awk '{print $2" "$3}')
+        git -C repo push --tags
+        rm -rf repo
       env:
         BODY: ${{ github.event.comment.body }}
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
