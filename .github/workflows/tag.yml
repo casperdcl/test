@@ -11,16 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Check Permissions
+      uses: actions/github-script@v2
+      with:
+        script: |
+          perm = github.repos.getCollaboratorPermissionLevel({
+            owner: context.repo.owner, repo: context.repo.repo, username: context.payload.comment.user.login})
+          if (!['admin', 'write'].includes(perm)){
+            post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
+            post({owner: context.repo.owner, repo: context.repo.repo, comment_id: context.payload.comment.id, content: "laugh"})
+            throw "Permission deined for user " + context.payload.comment.user.login
+          }
     - uses: actions/github-script@v2
       with:
         script: |
           post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
-          post({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            comment_id: context.payload.comment.id,
-            content: "eyes",
-          })
+          post({owner: context.repo.owner, repo: context.repo.repo, comment_id: context.payload.comment.id, content: "eyes"})
     - name: Tag Commit
       run: |
         git clone https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} repo
@@ -38,12 +44,7 @@ jobs:
       with:
         script: |
           post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
-          post({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            comment_id: context.payload.comment.id,
-            content: "rocket",
-          })
+          post({owner: context.repo.owner, repo: context.repo.repo, comment_id: context.payload.comment.id, content: "rocket"})
   always:
     runs-on: ubuntu-latest
     steps:
