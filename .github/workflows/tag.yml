@@ -6,27 +6,31 @@ on:
     types: [created, edited]
 
 jobs:
-  tag:
-    if: startsWith(github.event.comment.body, '/tag')
+  tag:  # /tag <tagname> <commit>
+    if: startsWith(github.event.comment.body, '/tag ')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Check Permissions
+    - name: React Seen
       uses: actions/github-script@v2
       with:
         script: |
-          perm = github.repos.getCollaboratorPermissionLevel({
-            owner: context.repo.owner, repo: context.repo.repo, username: context.payload.comment.user.login})
-          if (!['admin', 'write'].includes(perm)){
-            post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
-            post({owner: context.repo.owner, repo: context.repo.repo, comment_id: context.payload.comment.id, content: "laugh"})
-            throw "Permission deined for user " + context.payload.comment.user.login
+          const perm = await github.repos.getCollaboratorPermissionLevel({
+            owner: context.repo.owner, repo: context.repo.repo,
+            username: context.payload.comment.user.login})
+          post = (context.eventName == "issue_comment"
+            ? github.reactions.createForIssueComment
+            : github.reactions.createForPullRequestReviewComment)
+
+          if (!["admin", "write"].includes(perm.data.permission)){
+            post({
+              owner: context.repo.owner, repo: context.repo.repo,
+              comment_id: context.payload.comment.id, content: "laugh"})
+            throw "Permission denied for user " + context.payload.comment.user.login
           }
-    - uses: actions/github-script@v2
-      with:
-        script: |
-          post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
-          post({owner: context.repo.owner, repo: context.repo.repo, comment_id: context.payload.comment.id, content: "eyes"})
+          post({
+            owner: context.repo.owner, repo: context.repo.repo,
+            comment_id: context.payload.comment.id, content: "eyes"})
     - name: Tag Commit
       run: |
         git clone https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} repo
@@ -40,11 +44,16 @@ jobs:
         #GIT_AUTHOR_NAME: tag-bot
         #GIT_COMMITTER_EMAIL: casperdcl@noreply.github.com
         #GIT_AUTHOR_EMAIL: casperdcl@noreply.github.com
-    - uses: actions/github-script@v2
+    - name: React Success
+      uses: actions/github-script@v2
       with:
         script: |
-          post = context.eventName === 'issue_comment' ? github.reactions.createForIssueComment : github.reactions.createForPullRequestReviewComment
-          post({owner: context.repo.owner, repo: context.repo.repo, comment_id: context.payload.comment.id, content: "rocket"})
+          post = (context.eventName == "issue_comment"
+            ? github.reactions.createForIssueComment
+            : github.reactions.createForPullRequestReviewComment)
+          post({
+            owner: context.repo.owner, repo: context.repo.repo,
+            comment_id: context.payload.comment.id, content: "rocket"})
   always:
     runs-on: ubuntu-latest
     steps:
