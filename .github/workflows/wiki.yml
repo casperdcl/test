@@ -12,7 +12,9 @@ jobs:
         repository: ${{ github.repository }}.wiki
     - name: Update Releases
       run: |
-        head -c32 /dev/urandom > foo
-        git add foo
+        head -c32 /dev/urandom > foo.md
+        git add foo.md
+        git config --global user.email "casperdcl@noreply.github.com"
+        git config --global user.name "wiki-bot"
         git commit -am "update release notes to ${GITHUB_REF#refs/tags/}"
         git push
