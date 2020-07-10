@@ -1,0 +1,18 @@
+name: Post Release
+on:
+  release:
+    types: [published]
+  push:
+jobs:
+  wiki:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}.wiki
+    - name: Update Releases
+      run: |
+        head -c32 /dev/urandom > foo
+        git add foo
+        git commit -am "update release notes to ${GITHUB_REF#refs/tags/}"
+        git push
