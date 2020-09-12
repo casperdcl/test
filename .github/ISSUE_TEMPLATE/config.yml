@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+ - name: "StackOverflow#test"
+   url: https://stackoverflow.com/questions/tagged/test
+   about: "Stack Overflow questions tagged #test"
