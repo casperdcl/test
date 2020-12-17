@@ -6,10 +6,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: casperdcl/deploy-pypi@v1
-      # if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    - uses: actions/setup-python@v1
       with:
-        user: ${{ secrets.user }}
-        password: ${{ secrets.password }}
-        build: true
-        skip_existing: true
+        python-version: '3.x'
+    - run: |
+        echo "skip=true" >> $GITHUB_ENV
+    - if: '!env.skip'
+      run: |
+        echo should have skipped
+    - run: |
+        echo "skip=" >> $GITHUB_ENV
+    - if: '!env.skip'
+      run: |
+        echo should not have skipped
