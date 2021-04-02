@@ -1,0 +1,21 @@
+name: test
+description: An action
+inputs:
+  test_in:
+    description: An example input
+    required: false
+    default: one
+runs:
+  using: composite
+  steps:
+  - name: G vars
+    run: echo ${!G*} | tr ' ' '\n'
+    shell: bash
+  - name: all vars
+    run: declare -p
+    shell: bash
+    env:
+      TEST_IN: ${{ inputs.test_in }}
+branding:
+  icon: book-open
+  color: orange
