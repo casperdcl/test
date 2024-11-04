@@ -1,0 +1,13 @@
+name: Test Pandoc SVG URL images in PDF
+on:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: docker pull pandoc/latex
+    - run: |
+        docker run --rm -i -v .:/data -u $(id -u):$(id -g) pandoc/latex -s -o file.pdf file.md
+    - uses: actions/upload-artifact@v4
+      with: {path: file.pdf}
